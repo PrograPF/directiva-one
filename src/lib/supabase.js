@@ -1,17 +1,10 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Intentamos leer de las variables de entorno, si no, usamos el valor directo
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://yqhwapckkzjyaqkofvbq.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_4htdJtjBhyg-ghAifXRK9g_m6W1UsL2';
 
-console.log('--- DEBUG SUPABASE ---');
-console.log('URL definida:', !!supabaseUrl);
-console.log('KEY definida:', !!supabaseAnonKey);
+console.log('--- SISTEMA DE RECUPERACIÓN ACTIVADO ---');
+console.log('URL de conexión establecida.');
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('ERROR CRÍTICO: Faltan variables de entorno de Supabase.');
-}
-
-export const supabase = createClient(
-  supabaseUrl || 'https://placeholder.supabase.co', 
-  supabaseAnonKey || 'placeholder'
-);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
