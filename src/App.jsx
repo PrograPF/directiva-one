@@ -1,6 +1,15 @@
 import { useState, useEffect } from 'react'
 import { LayoutDashboard, Wallet, Calendar, Users, Settings, PlusCircle, Sun, Moon } from 'lucide-react'
+import { createClient } from '@supabase/supabase-js'
 import ApoderadosModule from './modules/Apoderados/ApoderadosModule'
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+console.log('Iniciando Supabase con URL:', supabaseUrl ? 'OK' : 'FALTA');
+console.log('Iniciando Supabase con KEY:', supabaseAnonKey ? 'OK' : 'FALTA');
+
+const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey) : null;
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard')
