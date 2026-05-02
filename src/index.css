@@ -1,27 +1,36 @@
 :root {
-  --bg-gradient-start: #f8fafc;
-  --bg-gradient-end: #f1f5f9;
-  --primary: #0f172a;
-  --primary-hover: #1e293b;
-  --accent: #3b82f6;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
+  /* Light Mode (Soft Violet/White) */
+  --bg-main: #fdfaff;
+  --bg-gradient: linear-gradient(135deg, #fdfaff 0%, #f5f0ff 100%);
+  --sidebar-bg: #ffffff;
   --card-bg: #ffffff;
-  --card-border: #e2e8f0;
-  --nav-bg: rgba(255, 255, 255, 0.9);
-  --font-main: 'Outfit', sans-serif;
+  --card-border: rgba(139, 92, 246, 0.1);
+  --text-main: #1e1b4b;
+  --text-muted: #6366f1;
+  --accent: #8b5cf6;
+  --accent-hover: #7c3aed;
+  --highlight: #f472b6;
+  --nav-bg: rgba(255, 255, 255, 0.8);
+  --font-main: 'Outfit', 'Inter', sans-serif;
+  --shadow-sm: 0 4px 6px -1px rgba(139, 92, 246, 0.05);
+  --shadow-md: 0 10px 15px -3px rgba(139, 92, 246, 0.1);
 }
 
 .dark {
-  --bg-gradient-start: #020617;
-  --bg-gradient-end: #0f172a;
-  --primary: #3b82f6;
-  --primary-hover: #60a5fa;
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --card-bg: #1e293b;
-  --card-border: #334155;
-  --nav-bg: rgba(15, 23, 42, 0.9);
+  /* Dark Mode (Deep Violet/Neon) - Option B: Creative Hub */
+  --bg-main: #0b0014;
+  --bg-gradient: radial-gradient(circle at top right, #1a0b2e 0%, #0b0014 100%);
+  --sidebar-bg: #130621;
+  --card-bg: rgba(26, 11, 46, 0.6);
+  --card-border: rgba(139, 92, 246, 0.2);
+  --text-main: #f5f3ff;
+  --text-muted: #a5b4fc;
+  --accent: #8b5cf6;
+  --accent-hover: #a78bfa;
+  --highlight: #f472b6;
+  --nav-bg: rgba(11, 0, 20, 0.8);
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
 }
 
 * {
@@ -33,10 +42,11 @@
 
 body {
   font-family: var(--font-main);
-  background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+  background: var(--bg-gradient);
+  background-attachment: fixed;
   color: var(--text-main);
   min-height: 100vh;
-  padding-bottom: 80px; /* Space for bottom nav */
+  transition: background 0.3s ease;
 }
 
 /* Header */
@@ -59,15 +69,17 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 75px;
+  height: 80px;
   background: var(--nav-bg);
-  backdrop-filter: blur(15px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-top: 1px solid var(--card-border);
   display: flex;
   justify-content: space-around;
   align-items: center;
   padding-bottom: env(safe-area-inset-bottom);
   z-index: 100;
+  box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.1);
 }
 
 .nav-tab {
@@ -109,10 +121,18 @@ body {
 .card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  border-radius: 20px;
-  padding: 1.25rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  margin-bottom: 1rem;
+  border-radius: 24px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 1.5rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 25px -5px rgba(139, 92, 246, 0.2);
 }
 
 /* Forms & Modals */
@@ -137,15 +157,23 @@ body {
 }
 
 /* Large touchable inputs */
-input {
+input, select, textarea {
   width: 100%;
-  padding: 1rem;
-  background: var(--bg-gradient-end);
+  padding: 1.1rem;
+  background: rgba(139, 92, 246, 0.05);
   border: 1px solid var(--card-border);
-  border-radius: 15px;
+  border-radius: 18px;
   color: var(--text-main);
   font-size: 1rem;
   margin-top: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: rgba(139, 92, 246, 0.1);
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
 }
 
 /* Professional Button Reset */
@@ -172,12 +200,16 @@ button.btn-primary {
   padding: 1.1rem;
   font-size: 1.1rem;
   border-radius: 20px;
-  background: var(--primary);
+  background: linear-gradient(135deg, var(--accent) 0%, #7c3aed 100%);
   color: white;
   font-weight: 700;
-  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.4);
+  border: none;
+  letter-spacing: 0.02em;
 }
 
 button.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 25px -5px rgba(139, 92, 246, 0.5);
   filter: brightness(1.1);
 }
