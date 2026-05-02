@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { LayoutDashboard, Wallet, Calendar, Users, Settings, PlusCircle, Sun, Moon } from 'lucide-react'
 import ApoderadosModule from './modules/Apoderados/ApoderadosModule'
+import CalendarModule from './modules/Calendar/CalendarModule'
 
 function App() {
   const [activeTab, setActiveTab] = useState('alumnos');
@@ -64,6 +65,8 @@ function App() {
         <div className="content-area container">
           {activeTab === 'alumnos' ? (
             <ApoderadosModule />
+          ) : activeTab === 'eventos' ? (
+            <CalendarModule />
           ) : (
             <div className="placeholder-module card">
               <div className="placeholder-icon">

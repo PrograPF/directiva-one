@@ -213,3 +213,27 @@ button.btn-primary:hover {
   box-shadow: 0 15px 25px -5px rgba(139, 92, 246, 0.5);
   filter: brightness(1.1);
 }
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--card-border);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* Calendar Grid Fix */
+.calendar-grid {
+  min-height: 600px;
+}
