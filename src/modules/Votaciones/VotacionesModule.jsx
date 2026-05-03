@@ -12,6 +12,7 @@ export default function VotacionesModule() {
   const [selectedVotacion, setSelectedVotacion] = useState(null)
   const [selectedAlumnoId, setSelectedAlumnoId] = useState('')
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(null)
+  const [activeTab, setActiveTab] = useState('vigentes')
   const [isAlumnoSelectOpen, setIsAlumnoSelectOpen] = useState(false)
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false)
   const [votosDetalle, setVotosDetalle] = useState([])
@@ -285,59 +286,110 @@ export default function VotacionesModule() {
           </div>
         )}
 
-        {/* Sección Vigentes */}
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-2 px-2">
-            <TrendingUp size={18} className="text-emerald-400" />
-            <h3 className="text-lg font-bold">Votaciones Vigentes</h3>
+        {/* Selector de Pestañas (Tabs) */}
+        <div className="flex p-1.5 bg-white/5 rounded-2xl border border-white/5 relative overflow-hidden">
+          <button 
+            onClick={() => setActiveTab('vigentes')}
+            className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm transition-all relative z-10 ${
+              activeTab === 'vigentes' ? 'text-white' : 'text-muted hover:text-white'
+            }`}
+          >
+            <TrendingUp size={18} className={activeTab === 'vigentes' ? 'text-emerald-400' : ''} />
+            VIGENTES
             {vigentes.length > 0 && (
-              <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse ml-1"></span>
+              <span className="flex h-2 w-2 rounded-full bg-emerald-500 ml-1"></span>
             )}
-          </div>
-
-          {vigentes.length === 0 ? (
-            <div className="card p-8 text-center border-dashed border-2 opacity-60">
-              <p className="text-muted">No hay votaciones activas en este momento.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {vigentes.map(v => (
-                <VotacionCard 
-                  key={v.id} 
-                  votacion={v} 
-                  onVote={() => openVotingModal(v)}
-                  onViewHistory={() => openHistoryModal(v)}
-                  onClose={() => handleCerrarVotacion(v.id)}
-                  onDelete={() => handleDeleteVotacion(v.id)}
-                  isAdmin={true}
-                />
-              ))}
-            </div>
-          )}
+          </button>
+          <button 
+            onClick={() => setActiveTab('finalizadas')}
+            className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm transition-all relative z-10 ${
+              activeTab === 'finalizadas' ? 'text-white' : 'text-muted hover:text-white'
+            }`}
+          >
+            <History size={18} className={activeTab === 'finalizadas' ? 'text-accent' : ''} />
+            FINALIZADAS
+            {historicas.length > 0 && (
+              <span className="text-[10px] px-1.5 py-0.5 bg-white/10 rounded-md ml-1 opacity-60">
+                {historicas.length}
+              </span>
+            )}
+          </button>
+          
+          {/* Indicador Deslizante */}
+          <div 
+            className="absolute top-1.5 bottom-1.5 bg-white/[0.08] rounded-xl transition-all duration-300 ease-out border border-white/5 shadow-xl"
+            style={{ 
+              width: 'calc(50% - 6px)',
+              left: activeTab === 'vigentes' ? '6px' : 'calc(50%)'
+            }}
+          />
         </div>
 
-        {/* Sección Históricas */}
-        <div className="flex flex-col gap-4 mt-4">
-          <div className="flex items-center gap-2 px-2">
-            <History size={18} className="text-slate-400" />
-            <h3 className="text-lg font-bold text-slate-400">Historial</h3>
-          </div>
+        {/* Contenido de Pestañas */}
+        <div className="min-h-[400px] animate-in fade-in slide-in-from-bottom-4 duration-500">
+          {activeTab === 'vigentes' ? (
+            /* Sección Vigentes */
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between px-2">
+                <h3 className="text-sm font-bold text-muted uppercase tracking-widest">En curso</h3>
+                <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded-lg">
+                  {vigentes.length} ACTIVAS
+                </span>
+              </div>
 
-          {historicas.length === 0 ? (
-            <div className="p-4 text-center text-sm text-muted italic">
-              El historial está vacío.
+              {vigentes.length === 0 ? (
+                <div className="card p-12 text-center border-dashed border-2 opacity-40 flex flex-col items-center gap-3">
+                  <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-muted">
+                    <TrendingUp size={32} />
+                  </div>
+                  <p className="text-muted font-medium">No hay votaciones activas en este momento.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {vigentes.map(v => (
+                    <VotacionCard 
+                      key={v.id} 
+                      votacion={v} 
+                      onVote={() => openVotingModal(v)}
+                      onViewHistory={() => openHistoryModal(v)}
+                      onClose={() => handleCerrarVotacion(v.id)}
+                      onDelete={() => handleDeleteVotacion(v.id)}
+                      isAdmin={true}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {historicas.map(v => (
-              <VotacionCard 
-                key={v.id} 
-                votacion={v} 
-                onViewHistory={() => openHistoryModal(v)}
-                onDelete={() => handleDeleteVotacion(v.id)}
-                isAdmin={true}
-              />
-            ))}
+            /* Sección Históricas */
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between px-2">
+                <h3 className="text-sm font-bold text-muted uppercase tracking-widest">Concluidas</h3>
+                <span className="text-[10px] font-bold bg-white/10 text-muted px-2 py-1 rounded-lg">
+                  HISTORIAL COMPLETO
+                </span>
+              </div>
+
+              {historicas.length === 0 ? (
+                <div className="card p-12 text-center border-dashed border-2 opacity-40 flex flex-col items-center gap-3">
+                  <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-muted">
+                    <History size={32} />
+                  </div>
+                  <p className="text-muted font-medium">El historial está vacío por ahora.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {historicas.map(v => (
+                    <VotacionCard 
+                      key={v.id} 
+                      votacion={v} 
+                      onViewHistory={() => openHistoryModal(v)}
+                      onDelete={() => handleDeleteVotacion(v.id)}
+                      isAdmin={true}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
