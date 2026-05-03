@@ -573,40 +573,67 @@ export default function VotacionesModule() {
                 <p className="text-sm text-muted">Cargando registros...</p>
               </div>
             ) : (
-              <div className="flex flex-col gap-4">
-                <div className="bg-white/5 rounded-2xl overflow-hidden border border-white/5">
-                  <table className="w-full text-left">
-                    <thead className="bg-white/5 text-[10px] uppercase tracking-widest font-bold text-muted">
-                      <tr>
-                        <th className="px-6 py-4">Alumno</th>
-                        <th className="px-6 py-4 text-right">Voto</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5">
-                      {votosDetalle.map((v, i) => (
-                        <tr key={i} className="hover:bg-white/[0.02] transition-colors">
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-xs text-slate-400">
-                                {v.alumnos?.nombre_alumno?.charAt(0)}
-                              </div>
-                              <span className="font-medium">{v.alumnos?.nombre_alumno}</span>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            <span className="px-3 py-1 bg-accent/10 text-accent text-xs font-bold rounded-lg border border-accent/20">
-                              {selectedVotacion.opciones[v.opcion_index]?.nombre}
-                            </span>
-                          </td>
+              <div className="flex flex-col gap-6">
+                {/* Resumen de Resultados Finales */}
+                <div className="grid grid-cols-1 gap-3">
+                  <h3 className="text-[10px] font-bold text-muted uppercase tracking-widest ml-1">Resultados por Opción</h3>
+                  {selectedVotacion.opciones.map((opt, idx) => {
+                    const totalVotos = selectedVotacion.opciones.reduce((acc, o) => acc + o.votos, 0)
+                    const porcentaje = totalVotos > 0 ? Math.round((opt.votos / totalVotos) * 100) : 0
+                    return (
+                      <div key={idx} className="bg-white/5 p-4 rounded-2xl border border-white/5">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="font-bold text-main">{opt.nombre}</span>
+                          <span className="text-accent font-black">{opt.votos} votos ({porcentaje}%)</span>
+                        </div>
+                        <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-accent transition-all duration-1000"
+                            style={{ width: `${porcentaje}%` }}
+                          />
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+
+                {/* Tabla de Votantes */}
+                <div className="flex flex-col gap-3">
+                  <h3 className="text-[10px] font-bold text-muted uppercase tracking-widest ml-1">Registro Detallado</h3>
+                  <div className="bg-white/5 rounded-2xl overflow-hidden border border-white/5 max-h-[400px] overflow-y-auto custom-scrollbar">
+                    <table className="w-full text-left">
+                      <thead className="bg-white/5 text-[10px] uppercase tracking-widest font-bold text-muted sticky top-0 z-10">
+                        <tr>
+                          <th className="px-6 py-4">Alumno</th>
+                          <th className="px-6 py-4 text-right">Voto</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  {votosDetalle.length === 0 && (
-                    <div className="p-10 text-center text-muted opacity-50 italic">
-                      No hay registros de votos individuales.
-                    </div>
-                  )}
+                      </thead>
+                      <tbody className="divide-y divide-white/5">
+                        {votosDetalle.map((v, i) => (
+                          <tr key={i} className="hover:bg-white/[0.02] transition-colors">
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-xs text-slate-400">
+                                  {v.alumnos?.nombre_alumno?.charAt(0)}
+                                </div>
+                                <span className="font-medium text-sm">{v.alumnos?.nombre_alumno}</span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-right">
+                              <span className="px-3 py-1 bg-accent/10 text-accent text-[10px] font-bold rounded-lg border border-accent/20">
+                                {selectedVotacion.opciones[v.opcion_index]?.nombre}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    {votosDetalle.length === 0 && (
+                      <div className="p-10 text-center text-muted opacity-50 italic">
+                        No hay registros de votos individuales.
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
@@ -725,23 +752,44 @@ function VotacionCard({ votacion, onVote, onViewHistory, onClose, onDelete, isAd
       </div>
 
       <div className="flex flex-col gap-4">
-        {votacion.opciones.map((opt, idx) => {
-          const porcentaje = totalVotos > 0 ? Math.round((opt.votos / totalVotos) * 100) : 0
-          return (
-            <div key={idx} className="flex flex-col gap-1.5">
-              <div className="flex justify-between text-sm">
-                <span className="font-medium text-main/90">{opt.nombre}</span>
-                <span className="font-bold text-accent">{opt.votos} ({porcentaje}%)</span>
-              </div>
-              <div className="h-2.5 bg-white/5 rounded-full overflow-hidden border border-white/5">
-                <div 
-                  className="h-full bg-gradient-to-r from-accent to-highlight transition-all duration-1000 ease-out"
-                  style={{ width: `${porcentaje}%` }}
-                ></div>
-              </div>
+        {isCerrada ? (
+          /* Vista simplificada para Historial */
+          <div className="bg-white/5 p-4 rounded-2xl border border-white/5 flex items-center justify-between">
+            <div>
+              <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">Opción Ganadora</p>
+              <h4 className="text-lg font-black text-accent">
+                {votacion.opciones.reduce((a, b) => a.votos > b.votos ? a : b).nombre}
+              </h4>
             </div>
-          )
-        })}
+            <div className="text-right">
+              <p className="text-2xl font-black text-main">
+                {totalVotos > 0 
+                  ? Math.round((votacion.opciones.reduce((a, b) => a.votos > b.votos ? a : b).votos / totalVotos) * 100) 
+                  : 0}%
+              </p>
+              <p className="text-[10px] text-muted font-bold uppercase">con {votacion.opciones.reduce((a, b) => a.votos > b.votos ? a : b).votos} votos</p>
+            </div>
+          </div>
+        ) : (
+          /* Vista detallada para Vigentes */
+          votacion.opciones.map((opt, idx) => {
+            const porcentaje = totalVotos > 0 ? Math.round((opt.votos / totalVotos) * 100) : 0
+            return (
+              <div key={idx} className="flex flex-col gap-1.5">
+                <div className="flex justify-between text-sm">
+                  <span className="font-medium text-main/90">{opt.nombre}</span>
+                  <span className="font-bold text-accent">{opt.votos} ({porcentaje}%)</span>
+                </div>
+                <div className="h-2.5 bg-white/5 rounded-full overflow-hidden border border-white/5">
+                  <div 
+                    className="h-full bg-gradient-to-r from-accent to-highlight transition-all duration-1000 ease-out"
+                    style={{ width: `${porcentaje}%` }}
+                  ></div>
+                </div>
+              </div>
+            )
+          })
+        )}
       </div>
 
       {!isCerrada && (
