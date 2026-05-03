@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import { LayoutDashboard, Wallet, Calendar, Users, Settings, PlusCircle, Sun, Moon } from 'lucide-react'
+import { LayoutDashboard, Wallet, Calendar, Users, Settings, PlusCircle, Sun, Moon, CheckCircle2 } from 'lucide-react'
 import ApoderadosModule from './modules/Apoderados/ApoderadosModule'
 import CalendarModule from './modules/Calendar/CalendarModule'
+import VotacionesModule from './modules/Votaciones/VotacionesModule'
 
 function App() {
   const [activeTab, setActiveTab] = useState('alumnos');
@@ -23,23 +24,27 @@ function App() {
         <div className="sidebar-header">
           <h1 className="logo-text">DirectivaOne</h1>
         </div>
-        
+
         <nav className="sidebar-nav">
           {[
             { id: 'alumnos', label: 'Alumnos', icon: Users },
             { id: 'caja', label: 'Caja y Pagos', icon: Wallet },
             { id: 'eventos', label: 'Eventos', icon: Calendar },
+            { id: 'votaciones', label: 'Votaciones', icon: CheckCircle2 },
             { id: 'settings', label: 'Configuración', icon: Settings },
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`nav-item ${activeTab === item.id ? 'active' : ''}`}
-            >
-              <item.icon size={20} />
-              <span>{item.label}</span>
-            </button>
-          ))}
+          ].map((item) => {
+            const Icon = item.icon || PlusCircle;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`nav-item ${activeTab === item.id ? 'active' : ''}`}
+              >
+                <Icon size={20} />
+                <span>{item.label}</span>
+              </button>
+            )
+          })}
         </nav>
       </aside>
 
@@ -53,8 +58,8 @@ function App() {
           <div className="header-title mobile-hidden">
             <h2 className="capitalize">{activeTab}</h2>
           </div>
-          
-          <button 
+
+          <button
             onClick={() => setIsDarkMode(!isDarkMode)}
             className="theme-toggle"
           >
@@ -67,6 +72,8 @@ function App() {
             <ApoderadosModule />
           ) : activeTab === 'eventos' ? (
             <CalendarModule />
+          ) : activeTab === 'votaciones' ? (
+            <VotacionesModule />
           ) : (
             <div className="placeholder-module card">
               <div className="placeholder-icon">
@@ -87,6 +94,7 @@ function App() {
           { id: 'alumnos', icon: Users, label: 'Alumnos' },
           { id: 'caja', icon: Wallet, label: 'Caja' },
           { id: 'eventos', icon: Calendar, label: 'Eventos' },
+          { id: 'votaciones', icon: CheckCircle2, label: 'Votos' },
         ].map((item) => (
           <button
             key={item.id}

@@ -35,7 +35,8 @@ const CalendarModule = () => {
     title: '',
     type: 'Evento',
     description: '',
-    time: ''
+    time: '',
+    notify_email: false
   });
 
   // Cargar datos al iniciar y cuando cambia el mes/año
@@ -160,7 +161,7 @@ const CalendarModule = () => {
 
   const handleAddEvent = () => {
     setEditingEvent(null);
-    setFormData({ title: '', type: 'Evento', description: '', time: '' });
+    setFormData({ title: '', type: 'Evento', description: '', time: '', notify_email: false });
     setViewMode('form');
   };
 
@@ -170,7 +171,8 @@ const CalendarModule = () => {
       title: event.title,
       type: event.type,
       description: event.description || '',
-      time: event.time || ''
+      time: event.time || '',
+      notify_email: event.notify_email || false
     });
     setViewMode('form');
   };
@@ -191,7 +193,7 @@ const CalendarModule = () => {
     e.preventDefault();
     const eventData = {
       ...formData,
-      time: formData.time || null, // Si está vacío, enviar null para evitar error de Supabase
+      time: formData.time || null,
       date: selectedDate
     };
 
@@ -360,6 +362,21 @@ const CalendarModule = () => {
                         onChange={e => setFormData({...formData, time: e.target.value})}
                         className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-main outline-none focus:border-accent transition-all"
                       />
+                    </div>
+                  </div>
+
+                  <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-between group hover:border-accent/30 transition-all cursor-pointer" onClick={() => setFormData({...formData, notify_email: !formData.notify_email})}>
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${formData.notify_email ? 'bg-accent/20 text-accent' : 'bg-slate-800 text-muted'}`}>
+                        <Info size={20} />
+                      </div>
+                      <div>
+                        <p className="font-bold text-main text-sm">Notificar por correo</p>
+                        <p className="text-[10px] text-muted">Se enviará un recordatorio a los apoderados.</p>
+                      </div>
+                    </div>
+                    <div className={`w-12 h-6 rounded-full p-1 transition-all ${formData.notify_email ? 'bg-accent' : 'bg-slate-700'}`}>
+                      <div className={`w-4 h-4 bg-white rounded-full transition-all ${formData.notify_email ? 'translate-x-6' : 'translate-x-0'}`} />
                     </div>
                   </div>
 
