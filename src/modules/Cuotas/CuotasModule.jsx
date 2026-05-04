@@ -219,6 +219,9 @@ export default function CuotasModule() {
                         </td>
                         {MESES.map(mes => {
                           const pagado = pagos.some(p => p.alumno_id === alumno.id && p.mes === mes.id)
+                          const currentMonth = new Date().getMonth() + 1
+                          const isAtrasado = !pagado && mes.id <= currentMonth
+
                           return (
                             <td key={mes.id} className="p-1 sm:p-3 text-center border-b border-white/5">
                               <button
@@ -226,7 +229,9 @@ export default function CuotasModule() {
                                 className={`w-full py-2.5 sm:py-4 rounded-lg sm:rounded-xl flex flex-col items-center justify-center gap-0.5 transition-all duration-300 ${
                                   pagado 
                                     ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.05)]' 
-                                    : 'bg-white/5 text-slate-600 hover:text-red-400 hover:bg-red-400/5 hover:border-red-400/20 border border-transparent'
+                                    : isAtrasado
+                                      ? 'bg-red-500/10 text-red-400 border border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.05)]'
+                                      : 'bg-white/5 text-slate-600 hover:text-white hover:bg-white/10 border border-transparent'
                                 }`}
                               >
                                 {pagado ? (
@@ -234,10 +239,15 @@ export default function CuotasModule() {
                                     <CheckCircle2 size={14} className="sm:w-[18px] sm:h-[18px]" />
                                     <span className="text-[6px] sm:text-[8px] font-black uppercase">Pagado</span>
                                   </>
+                                ) : isAtrasado ? (
+                                  <>
+                                    <XCircle size={14} className="text-red-400 sm:w-[18px] sm:h-[18px]" />
+                                    <span className="text-[6px] sm:text-[8px] font-black uppercase">Debe</span>
+                                  </>
                                 ) : (
                                   <>
                                     <AlertCircle size={14} className="opacity-30 sm:w-[18px] sm:h-[18px]" />
-                                    <span className="text-[6px] sm:text-[8px] font-black uppercase">Debe</span>
+                                    <span className="text-[6px] sm:text-[8px] font-black uppercase">Pendiente</span>
                                   </>
                                 )}
                               </button>
