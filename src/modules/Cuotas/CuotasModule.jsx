@@ -181,14 +181,14 @@ export default function CuotasModule() {
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-slate-950/50">
-                    <th className="p-6 text-left text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 border-b border-white/5 sticky left-0 bg-slate-900/90 z-10 backdrop-blur-md">
+                    <th className="p-3 sm:p-6 text-left text-[9px] sm:text-[11px] font-black uppercase tracking-widest text-slate-500 border-b border-white/5 sticky left-0 bg-slate-900/90 z-20 backdrop-blur-md min-w-[100px] sm:min-w-[150px]">
                       Alumno
                     </th>
                     {MESES.map(mes => (
-                      <th key={mes.id} className="p-6 text-center text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 border-b border-white/5 min-w-[120px]">
-                        {mes.nombre}
-                        <div className="text-[9px] text-accent/60 mt-1">
-                          {formatMoney(cuotasConfig.find(c => c.mes === mes.id)?.monto || 0)}
+                      <th key={mes.id} className="p-2 sm:p-6 text-center text-[9px] sm:text-[11px] font-black uppercase tracking-widest text-slate-500 border-b border-white/5 min-w-[70px] sm:min-w-[120px]">
+                        {mes.nombre.substring(0, 3)}
+                        <div className="text-[8px] text-accent/60 mt-1">
+                          {formatMoney(cuotasConfig.find(c => c.mes === mes.id)?.monto || 0).replace('CLP', '')}
                         </div>
                       </th>
                     ))}
@@ -199,46 +199,45 @@ export default function CuotasModule() {
                     const pagosAlumno = pagos.filter(p => p.alumno_id === alumno.id)
                     const totalPagado = pagosAlumno.length
                     const porcentaje = (totalPagado / MESES.length) * 100
+                    
+                    // Lógica "Al Día"
+                    const currentMonth = new Date().getMonth() + 1
+                    const mesesRequeridos = MESES.filter(m => m.id <= currentMonth)
+                    const isAlDia = mesesRequeridos.every(m => pagos.some(p => p.alumno_id === alumno.id && p.mes === m.id))
 
                     return (
                       <tr key={alumno.id} className="group hover:bg-white/5 transition-colors">
-                        <td className="p-5 sticky left-0 bg-slate-900/90 group-hover:bg-slate-800/90 z-10 border-b border-white/5 backdrop-blur-md">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent text-xs font-bold shadow-inner">
-                              {alumno.nombre_alumno.charAt(0)}
-                            </div>
-                            <div>
-                              <p className="text-sm font-bold text-white group-hover:text-accent transition-colors">{alumno.nombre_alumno}</p>
-                              <div className="w-24 h-1 bg-white/5 rounded-full mt-1.5 overflow-hidden">
-                                <div 
-                                  className="h-full bg-accent shadow-[0_0_8px_rgba(139,92,246,0.5)] transition-all duration-1000" 
-                                  style={{ width: `${porcentaje}%` }}
-                                />
-                              </div>
-                            </div>
+                        <td className="p-2 sm:p-5 sticky left-0 bg-slate-900/90 group-hover:bg-slate-800/90 z-20 border-b border-white/5 backdrop-blur-md">
+                          <div className="flex flex-col gap-1">
+                            <p className="text-[11px] sm:text-sm font-bold text-white group-hover:text-accent transition-colors truncate max-w-[80px] sm:max-w-none">
+                              {alumno.nombre_alumno}
+                            </p>
+                            <span className={`text-[8px] font-black uppercase tracking-tighter ${isAlDia ? 'text-emerald-400' : 'text-amber-500'}`}>
+                              {isAlDia ? '● Al Día' : '○ Pendiente'}
+                            </span>
                           </div>
                         </td>
                         {MESES.map(mes => {
                           const pagado = pagos.some(p => p.alumno_id === alumno.id && p.mes === mes.id)
                           return (
-                            <td key={mes.id} className="p-3 text-center border-b border-white/5">
+                            <td key={mes.id} className="p-1 sm:p-3 text-center border-b border-white/5">
                               <button
                                 onClick={() => handleTogglePago(alumno.id, mes.id)}
-                                className={`w-full py-4 rounded-xl flex flex-col items-center justify-center gap-1 transition-all duration-300 ${
+                                className={`w-full py-2.5 sm:py-4 rounded-lg sm:rounded-xl flex flex-col items-center justify-center gap-0.5 transition-all duration-300 ${
                                   pagado 
-                                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]' 
+                                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.05)]' 
                                     : 'bg-white/5 text-slate-600 hover:text-red-400 hover:bg-red-400/5 hover:border-red-400/20 border border-transparent'
                                 }`}
                               >
                                 {pagado ? (
                                   <>
-                                    <CheckCircle2 size={18} />
-                                    <span className="text-[8px] font-black uppercase">Pagado</span>
+                                    <CheckCircle2 size={14} className="sm:w-[18px] sm:h-[18px]" />
+                                    <span className="text-[6px] sm:text-[8px] font-black uppercase">Pagado</span>
                                   </>
                                 ) : (
                                   <>
-                                    <AlertCircle size={18} className="opacity-40" />
-                                    <span className="text-[8px] font-black uppercase">Pendiente</span>
+                                    <AlertCircle size={14} className="opacity-30 sm:w-[18px] sm:h-[18px]" />
+                                    <span className="text-[6px] sm:text-[8px] font-black uppercase">Debe</span>
                                   </>
                                 )}
                               </button>
