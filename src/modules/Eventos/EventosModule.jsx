@@ -653,27 +653,27 @@ export default function EventosModule() {
             </div>
 
             {/* Mini Dashboard de Evento */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-              <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl">
-                <div className="flex items-center gap-2 text-emerald-400 mb-1">
-                  <ArrowUpRight size={16} />
-                  <span className="text-[10px] font-bold uppercase tracking-widest">Ingresos</span>
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
+              <div className="bg-emerald-500/10 border border-emerald-500/20 p-2.5 sm:p-4 rounded-2xl">
+                <div className="flex items-center gap-1.5 text-emerald-400 mb-1">
+                  <ArrowUpRight size={14} className="sm:w-4 sm:h-4" />
+                  <span className="text-[8px] sm:text-[10px] font-bold uppercase tracking-wider">Ingresos</span>
                 </div>
-                <p className="text-2xl font-black text-white">{formatMoney(calculateEventBalance(selectedEvent).ingresos)}</p>
+                <p className="text-sm sm:text-2xl font-black text-white">{formatMoney(calculateEventBalance(selectedEvent).ingresos)}</p>
               </div>
-              <div className="bg-red-500/10 border border-red-500/20 p-4 rounded-2xl">
-                <div className="flex items-center gap-2 text-red-400 mb-1">
-                  <ArrowDownRight size={16} />
-                  <span className="text-[10px] font-bold uppercase tracking-widest">Gastos</span>
+              <div className="bg-red-500/10 border border-red-500/20 p-2.5 sm:p-4 rounded-2xl">
+                <div className="flex items-center gap-1.5 text-red-400 mb-1">
+                  <ArrowDownRight size={14} className="sm:w-4 sm:h-4" />
+                  <span className="text-[8px] sm:text-[10px] font-bold uppercase tracking-wider">Gastos</span>
                 </div>
-                <p className="text-2xl font-black text-white">{formatMoney(calculateEventBalance(selectedEvent).egresos)}</p>
+                <p className="text-sm sm:text-2xl font-black text-white">{formatMoney(calculateEventBalance(selectedEvent).egresos)}</p>
               </div>
-              <div className="bg-accent/10 border border-accent/20 p-4 rounded-2xl">
-                <div className="flex items-center gap-2 text-accent mb-1">
-                  <TrendingUp size={16} />
-                  <span className="text-[10px] font-bold uppercase tracking-widest">Balance Neto</span>
+              <div className="bg-accent/10 border border-accent/20 p-2.5 sm:p-4 rounded-2xl">
+                <div className="flex items-center gap-1.5 text-accent mb-1">
+                  <TrendingUp size={14} className="sm:w-4 sm:h-4" />
+                  <span className="text-[8px] sm:text-[10px] font-bold uppercase tracking-wider">Balance</span>
                 </div>
-                <p className="text-2xl font-black text-white">{formatMoney(calculateEventBalance(selectedEvent).neto)}</p>
+                <p className="text-sm sm:text-2xl font-black text-white">{formatMoney(calculateEventBalance(selectedEvent).neto)}</p>
               </div>
             </div>
 
@@ -699,54 +699,58 @@ export default function EventosModule() {
                 <div className="flex flex-col gap-6">
                   {/* Formulario Nueva Transacción - Estilo Neón */}
                   {selectedEvent.estado === 'abierto' ? (
-                    <div className="bg-slate-900/40 p-5 rounded-3xl border border-accent/20 shadow-[0_0_20px_rgba(139,92,246,0.05)]">
-                      <div className="flex items-center gap-2 mb-4">
-                        <Receipt size={16} className="text-accent" />
-                        <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-accent/80">Registrar Movimiento</h4>
+                    <div className="bg-slate-900/60 p-6 rounded-[2rem] border-2 border-accent/30 shadow-[0_0_30px_rgba(139,92,246,0.15)] mb-4">
+                      <div className="flex items-center gap-2 mb-5">
+                        <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center">
+                          <Receipt size={18} className="text-accent" />
+                        </div>
+                        <h4 className="text-[12px] font-black uppercase tracking-[0.2em] text-accent">Registrar Movimiento</h4>
                       </div>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
-                        <div className="md:col-span-3 flex flex-col gap-1.5">
-                          <label className="text-[9px] font-bold text-accent/80 uppercase ml-2 tracking-widest">TIPO</label>
-                          <select 
-                            value={newTransaction.tipo}
-                            onChange={(e) => setNewTransaction({...newTransaction, tipo: e.target.value})}
-                            className="!py-2.5 !px-3 !text-xs rounded-xl bg-slate-950 border-white/10 text-white focus:border-accent/50"
-                          >
-                            <option value="ingreso">Ingreso (+)</option>
-                            <option value="egreso">Egreso (-)</option>
-                          </select>
-                        </div>
+                      <div className="flex flex-col gap-5">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-[10px] font-bold text-accent/80 uppercase ml-2 tracking-widest">TIPO</label>
+                            <select 
+                              value={newTransaction.tipo}
+                              onChange={(e) => setNewTransaction({...newTransaction, tipo: e.target.value})}
+                              className="!py-4 !px-4 !text-base rounded-2xl bg-slate-950 border-white/10 text-white focus:border-accent/50 appearance-none cursor-pointer"
+                            >
+                              <option value="ingreso">Ingreso (+)</option>
+                              <option value="egreso">Egreso (-)</option>
+                            </select>
+                          </div>
 
-                        <div className="md:col-span-5 flex flex-col gap-1.5">
-                          <label className="text-[9px] font-bold text-accent/80 uppercase ml-2 tracking-widest">DESCRIPCIÓN</label>
-                          <input 
-                            type="text" 
-                            placeholder="Ej: Venta 20 completos"
-                            value={newTransaction.descripcion}
-                            onChange={(e) => setNewTransaction({...newTransaction, descripcion: e.target.value})}
-                            className="!py-2.5 !px-4 !text-xs rounded-xl bg-slate-950 border-white/10 text-white focus:border-accent/50"
-                          />
-                        </div>
-
-                        <div className="md:col-span-4 flex items-end gap-2">
-                          <div className="flex-1 flex flex-col gap-1.5">
-                            <label className="text-[9px] font-bold text-accent/80 uppercase ml-2 tracking-widest">MONTO ($)</label>
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-[10px] font-bold text-accent/80 uppercase ml-2 tracking-widest">MONTO ($)</label>
                             <input 
                               type="number" 
                               placeholder="0"
                               value={newTransaction.monto}
                               onChange={(e) => setNewTransaction({...newTransaction, monto: e.target.value})}
-                              className="!py-2.5 !px-4 !text-xs rounded-xl bg-slate-950 border-white/10 text-white font-bold focus:border-accent/50"
+                              className="!py-4 !px-4 !text-2xl rounded-2xl bg-slate-950 border-white/10 text-white font-black focus:border-accent/50 placeholder:text-white/10"
                             />
                           </div>
-                          <button 
-                            onClick={handleAddTransaction}
-                            disabled={isSaving || !newTransaction.monto || !newTransaction.descripcion}
-                            className="bg-accent hover:bg-accent-hover text-white h-[38px] w-[38px] rounded-xl flex items-center justify-center shadow-lg shadow-accent/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                          >
-                            {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Plus size={20} />}
-                          </button>
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-[10px] font-bold text-accent/80 uppercase ml-2 tracking-widest">DESCRIPCIÓN</label>
+                          <div className="flex gap-2">
+                            <input 
+                              type="text" 
+                              placeholder="Ej: Venta de completos"
+                              value={newTransaction.descripcion}
+                              onChange={(e) => setNewTransaction({...newTransaction, descripcion: e.target.value})}
+                              className="flex-1 !py-4 !px-4 !text-base rounded-2xl bg-slate-950 border-white/10 text-white focus:border-accent/50"
+                            />
+                            <button 
+                              onClick={handleAddTransaction}
+                              disabled={isSaving || !newTransaction.monto || !newTransaction.descripcion}
+                              className="bg-accent hover:bg-accent-hover text-white w-16 h-16 rounded-2xl flex items-center justify-center shadow-xl shadow-accent/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95"
+                            >
+                              {isSaving ? <Loader2 size={24} className="animate-spin" /> : <Plus size={32} />}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>

@@ -75,15 +75,24 @@ body {
   -webkit-backdrop-filter: blur(20px);
   border-top: 1px solid var(--card-border);
   display: flex;
-  justify-content: space-around;
+  justify-content: flex-start;
   align-items: center;
+  padding: 0 10px;
   padding-bottom: env(safe-area-inset-bottom);
+  overflow-x: auto;
+  gap: 5px;
   z-index: 100;
   box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.1);
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.bottom-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .nav-tab {
-  flex: 1;
+  flex: 0 0 75px;
   display: flex;
   flex-direction: column;
   align-items: center;

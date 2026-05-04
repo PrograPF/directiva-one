@@ -108,6 +108,7 @@ function App() {
           { id: 'alumnos', icon: Users, label: 'Alumnos', color: '#60a5fa' },
           { id: 'calendario', icon: Calendar, label: 'Calendar', color: '#34d399' },
           { id: 'eventos', icon: Wallet, label: 'Finanzas', color: '#fbbf24' },
+          { id: 'cuotas', icon: CreditCard, label: 'Cuotas', color: '#8b5cf6' },
           { id: 'votaciones', icon: CheckCircle2, label: 'Votos', color: '#f472b6' },
         ].map((item) => (
           <button
