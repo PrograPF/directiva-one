@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { LayoutDashboard, Wallet, Calendar, Users, Settings, PlusCircle, Sun, Moon, CheckCircle2, Vote, CreditCard } from 'lucide-react'
+import { LayoutDashboard, Wallet, Calendar, Users, Settings, PlusCircle, Sun, Moon, CheckCircle2, Vote, CreditCard, Bell } from 'lucide-react'
 import ApoderadosModule from './modules/Apoderados/ApoderadosModule'
 import CalendarModule from './modules/Calendar/CalendarModule'
 import VotacionesModule from './modules/Votaciones/VotacionesModule'
