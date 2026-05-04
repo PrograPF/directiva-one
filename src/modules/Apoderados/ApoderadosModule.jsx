@@ -18,7 +18,8 @@ export default function ApoderadosModule() {
     apoderado_2: '',
     email: '',
     telefono_1: '',
-    telefono_2: ''
+    telefono_2: '',
+    rol_directiva: ''
   })
 
   // Cargar alumnos al iniciar
@@ -96,7 +97,8 @@ export default function ApoderadosModule() {
       apoderado_2: alumno.apoderado_2 || '',
       email: alumno.email || '',
       telefono_1: alumno.telefono_1 || '',
-      telefono_2: alumno.telefono_2 || ''
+      telefono_2: alumno.telefono_2 || '',
+      rol_directiva: alumno.rol_directiva || ''
     })
     setIsModalOpen(true)
   }
@@ -111,7 +113,8 @@ export default function ApoderadosModule() {
       apoderado_2: '',
       email: '',
       telefono_1: '',
-      telefono_2: ''
+      telefono_2: '',
+      rol_directiva: ''
     })
   }
 
@@ -197,13 +200,26 @@ export default function ApoderadosModule() {
               </div>
 
               {/* Cabecera de la ficha */}
-              <div className="flex items-start justify-between w-full border-b border-white/5 pb-4 pr-10">
+              <div className={`flex items-start justify-between w-full border-b pb-4 pr-10 ${alumno.rol_directiva ? 'border-accent/30' : 'border-white/5'}`}>
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-accent/10 rounded-2xl flex items-center justify-center text-accent shrink-0 border border-accent/20">
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border transition-all ${
+                    alumno.rol_directiva 
+                      ? 'bg-accent/20 text-accent border-accent/40 shadow-[0_0_15px_rgba(139,92,246,0.3)]' 
+                      : 'bg-accent/10 text-accent border-accent/20'
+                  }`}>
                     <GraduationCap size={24} />
                   </div>
                   <div>
-                    <h3 className="font-bold text-xl m-0 leading-tight text-main">{alumno.nombre_alumno}</h3>
+                    <div className="flex flex-col">
+                      <h3 className={`font-bold text-xl m-0 leading-tight transition-colors ${alumno.rol_directiva ? 'text-accent' : 'text-main'}`}>
+                        {alumno.nombre_alumno}
+                      </h3>
+                      {alumno.rol_directiva && (
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-accent mt-1 bg-accent/10 px-2 py-0.5 rounded-full self-start border border-accent/20">
+                          {alumno.rol_directiva}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -314,6 +330,21 @@ export default function ApoderadosModule() {
                     className="rounded-[18px]"
                   />
                 </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-[11px] font-bold text-muted uppercase tracking-[0.15em] ml-1">Cargo Directiva (Opcional)</label>
+                <select 
+                  value={formData.rol_directiva}
+                  onChange={(e) => setFormData({...formData, rol_directiva: e.target.value})}
+                  className="rounded-[18px] bg-slate-950 border-white/10 text-white p-4 outline-none focus:border-accent"
+                >
+                  <option value="">Ninguno</option>
+                  <option value="Presidente">Presidente</option>
+                  <option value="Tesorero">Tesorero</option>
+                  <option value="Secretario">Secretario</option>
+                  <option value="Delegado">Delegado</option>
+                </select>
               </div>
 
               <div className="flex gap-3 mt-6">

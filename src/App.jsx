@@ -5,9 +5,10 @@ import CalendarModule from './modules/Calendar/CalendarModule'
 import VotacionesModule from './modules/Votaciones/VotacionesModule'
 import EventosModule from './modules/Eventos/EventosModule'
 import CuotasModule from './modules/Cuotas/CuotasModule'
+import NoticiasModule from './modules/Noticias/NoticiasModule'
 
 function App() {
-  const [activeTab, setActiveTab] = useState('alumnos');
+  const [activeTab, setActiveTab] = useState('noticias');
   const [isDarkMode, setIsDarkMode] = useState(true);
 
   // Efecto para aplicar el tema al body
@@ -29,6 +30,7 @@ function App() {
 
         <nav className="sidebar-nav">
           {[
+            { id: 'noticias', label: 'Novedades', icon: Bell, color: '#a78bfa' },
             { id: 'alumnos', label: 'Alumnos', icon: Users, color: '#60a5fa' },
             { id: 'calendario', label: 'Calendario', icon: Calendar, color: '#34d399' },
             { id: 'eventos', label: 'Eventos/Finanzas', icon: Wallet, color: '#fbbf24' },
@@ -78,7 +80,9 @@ function App() {
         </header>
 
         <div className="content-area container">
-          {activeTab === 'alumnos' ? (
+          {activeTab === 'noticias' ? (
+            <NoticiasModule />
+          ) : activeTab === 'alumnos' ? (
             <ApoderadosModule />
           ) : activeTab === 'calendario' ? (
             <CalendarModule />
@@ -105,6 +109,7 @@ function App() {
       {/* Mobile Nav */}
       <nav className="bottom-nav md-hidden">
         {[
+          { id: 'noticias', icon: Bell, label: 'Novedades', color: '#a78bfa' },
           { id: 'alumnos', icon: Users, label: 'Alumnos', color: '#60a5fa' },
           { id: 'calendario', icon: Calendar, label: 'Calendar', color: '#34d399' },
           { id: 'eventos', icon: Wallet, label: 'Finanzas', color: '#fbbf24' },
