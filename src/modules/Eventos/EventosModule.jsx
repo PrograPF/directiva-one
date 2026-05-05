@@ -31,6 +31,7 @@ export default function EventosModule() {
   const [eventSubTab, setEventSubTab] = useState('balance')
   const [alumnos, setAlumnos] = useState([])
   const [confirmAction, setConfirmAction] = useState(null) // { message, onConfirm }
+  const [isGastoModalOpen, setIsGastoModalOpen] = useState(false)
   
   // Estados para formularios
   const [isSaving, setIsSaving] = useState(false)
@@ -39,6 +40,13 @@ export default function EventosModule() {
     descripcion: '',
     fecha: new Date().toISOString().split('T')[0],
     ganancia_estimada: ''
+  })
+
+  const [gastoFormData, setGastoFormData] = useState({
+    nombre: '',
+    descripcion: '',
+    fecha: new Date().toISOString().split('T')[0],
+    monto: ''
   })
 
   const [newTransaction, setNewTransaction] = useState({
@@ -298,6 +306,69 @@ export default function EventosModule() {
     })
   }
 
+  const handleCreateGasto = async (e) => {
+    e.preventDefault()
+    if (!gastoFormData.monto || !gastoFormData.nombre) return
+    setIsSaving(true)
+    
+    try {
+      const monto = parseFloat(gastoFormData.monto)
+      
+      // 1. Crear el evento ya CERRADO
+      const { data: event, error: eventError } = await supabase
+        .from('eventos')
+        .insert([{
+          nombre: `[GASTO] ${gastoFormData.nombre}`,
+          descripcion: gastoFormData.descripcion,
+          fecha: gastoFormData.fecha,
+          estado: 'cerrado',
+          ganancia_estimada: 0
+        }])
+        .select()
+        .single()
+
+      if (eventError) throw eventError
+
+      // 2. Registrar el egreso financiero vinculado
+      await supabase
+        .from('eventos_financiero')
+        .insert([{
+          evento_id: event.id,
+          tipo: 'egreso',
+          monto: monto,
+          descripcion: 'Gasto directo registrado'
+        }])
+
+      // 3. Actualizar Caja Global
+      let { data: currentCaja } = await supabase.from('caja_global').select('*').maybeSingle()
+      if (!currentCaja) {
+        const { data: newCaja } = await supabase.from('caja_global').insert([{ saldo_actual: 0 }]).select().single()
+        currentCaja = newCaja
+      }
+      
+      const newSaldo = (currentCaja?.saldo_actual || 0) - monto
+      await supabase.from('caja_global').update({ saldo_actual: newSaldo }).eq('id', currentCaja.id)
+
+      // 4. Registrar movimiento de auditoría
+      await supabase.from('caja_movimientos').insert([{
+        monto: monto,
+        tipo: 'salida',
+        motivo: `Gasto: ${gastoFormData.nombre}`,
+        evento_id: event.id
+      }])
+
+      setIsGastoModalOpen(false)
+      setGastoFormData({ nombre: '', descripcion: '', fecha: new Date().toISOString().split('T')[0], monto: '' })
+      fetchData()
+      fetchMovimientos()
+    } catch (error) {
+      console.error('Error al registrar gasto:', error)
+      alert('Error al registrar el gasto')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
   const handleCreateEvento = async (e) => {
     e.preventDefault()
     setIsSaving(true)
@@ -404,12 +475,20 @@ export default function EventosModule() {
           <div className="flex flex-col gap-6">
             <div className="flex justify-between items-center px-2">
               <h3 className="text-sm font-bold text-muted uppercase tracking-widest">Eventos de Recaudación</h3>
-              <button 
-                onClick={() => setIsModalOpen(true)}
-                className="btn-primary !py-2 !px-4 text-xs flex items-center gap-2"
-              >
-                <Plus size={16} /> NUEVO EVENTO
-              </button>
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => setIsGastoModalOpen(true)}
+                  className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 py-2 px-4 rounded-xl text-xs font-bold flex items-center gap-2 transition-all"
+                >
+                  <TrendingDown size={16} /> GASTOS
+                </button>
+                <button 
+                  onClick={() => setIsModalOpen(true)}
+                  className="btn-primary !py-2 !px-4 text-xs flex items-center gap-2"
+                >
+                  <Plus size={16} /> NUEVO EVENTO
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -891,6 +970,90 @@ export default function EventosModule() {
                 </button>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Crear Gasto Directo */}
+      {isGastoModalOpen && (
+        <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setIsGastoModalOpen(false); }}>
+          <div className="modal-content !max-w-xl border-red-500/20 bg-red-500/[0.02]">
+            <div className="flex justify-between items-center mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-red-500/20 rounded-xl text-red-400">
+                  <TrendingDown size={20} />
+                </div>
+                <h2 className="text-2xl font-bold">Registrar Gasto Directo</h2>
+              </div>
+              <button onClick={() => setIsGastoModalOpen(false)} className="p-2 text-slate-500 hover:text-red-400 transition-colors">
+                <X size={28} />
+              </button>
+            </div>
+            
+            <form onSubmit={handleCreateGasto} className="flex flex-col gap-5">
+              <div className="flex flex-col gap-2">
+                <label className="text-[11px] font-bold text-red-400 uppercase tracking-[0.15em] ml-1">Motivo del Gasto</label>
+                <input 
+                  type="text" 
+                  required
+                  placeholder="Ej: Adornos sala, Torta cumpleaños, etc."
+                  value={gastoFormData.nombre}
+                  onChange={(e) => setGastoFormData({...gastoFormData, nombre: e.target.value})}
+                  className="rounded-[18px] focus:border-red-500 focus:bg-red-500/5"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-[11px] font-bold text-red-400 uppercase tracking-[0.15em] ml-1">Descripción (Opcional)</label>
+                <textarea 
+                  placeholder="Detalles adicionales sobre el gasto..."
+                  value={gastoFormData.descripcion}
+                  onChange={(e) => setGastoFormData({...gastoFormData, descripcion: e.target.value})}
+                  className="rounded-[18px] bg-white/5 border-white/10 p-4 text-white min-h-[100px] focus:border-red-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-2">
+                  <label className="text-[11px] font-bold text-red-400 uppercase tracking-[0.15em] ml-1">Fecha</label>
+                  <input 
+                    type="date" 
+                    required
+                    value={gastoFormData.fecha}
+                    onChange={(e) => setGastoFormData({...gastoFormData, fecha: e.target.value})}
+                    className="rounded-[18px] focus:border-red-500"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-[11px] font-bold text-red-400 uppercase tracking-[0.15em] ml-1">Monto del Gasto ($)</label>
+                  <input 
+                    type="number" 
+                    required
+                    placeholder="Ej: 15000"
+                    value={gastoFormData.monto}
+                    onChange={(e) => setGastoFormData({...gastoFormData, monto: e.target.value})}
+                    className="rounded-[18px] font-black text-red-400 focus:border-red-500"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-4">
+                <button 
+                  type="button"
+                  onClick={() => setIsGastoModalOpen(false)}
+                  className="flex-1 bg-white/5 hover:bg-white/10 text-main py-4 rounded-2xl font-bold transition-all"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="submit"
+                  disabled={isSaving}
+                  className="flex-[2] bg-red-500 hover:bg-red-600 text-white py-4 rounded-2xl font-bold transition-all shadow-lg shadow-red-500/20 disabled:opacity-50"
+                >
+                  {isSaving ? <Loader2 size={24} className="animate-spin m-auto" /> : 'Registrar Gasto'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
