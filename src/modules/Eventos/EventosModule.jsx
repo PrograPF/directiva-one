@@ -22,7 +22,8 @@ import { supabase } from '../../lib/supabase'
 
 export default function EventosModule() {
   const [eventos, setEventos] = useState([])
-  const [cajaGlobal, setCajaGlobal] = useState(0)
+  const [cajaGlobal, setCajaGlobal] = useState(0) // Ahora representa solo Eventos
+  const [cajaGastos, setCajaGastos] = useState(0) // Nuevo: representa solo Gastos directos
   const [isLoading, setIsLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('actividades')
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -126,15 +127,19 @@ export default function EventosModule() {
       const evts = eventosData || []
       setEventos(evts)
       
-      // CÁLCULO INFALIBLE: Suma de todos los eventos CERRADOS
-      const saldoTotal = evts
-        .filter(e => e.estado === 'cerrado')
-        .reduce((acc, e) => {
-          const balance = calculateEventBalance(e)
-          return acc + balance.neto
-        }, 0)
+      // CÁLCULO SEPARADO: Eventos vs Gastos
+      const closedEvents = evts.filter(e => e.estado === 'cerrado')
       
-      setCajaGlobal(saldoTotal)
+      const saldoEventos = closedEvents
+        .filter(e => !e.nombre.startsWith('[GASTO]'))
+        .reduce((acc, e) => acc + calculateEventBalance(e).neto, 0)
+        
+      const saldoGastos = closedEvents
+        .filter(e => e.nombre.startsWith('[GASTO]'))
+        .reduce((acc, e) => acc + calculateEventBalance(e).neto, 0)
+
+      setCajaGlobal(saldoEventos)
+      setCajaGastos(Math.abs(saldoGastos))
 
       if (selectedEvent) {
         const updated = evts.find(e => e.id === selectedEvent.id)
@@ -428,13 +433,25 @@ export default function EventosModule() {
           </p>
         </div>
         
-        <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-3xl flex items-center gap-4 shadow-xl shadow-emerald-500/5">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
-            <Wallet size={24} />
+        <div className="flex gap-3">
+          <div className="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-3xl flex items-center gap-4 shadow-xl shadow-emerald-500/5">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
+              <Wallet size={24} />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Caja Eventos</p>
+              <p className="text-2xl font-black text-white">{formatMoney(cajaGlobal)}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Caja Global Actual</p>
-            <p className="text-2xl font-black text-white">{formatMoney(cajaGlobal)}</p>
+
+          <div className="bg-red-500/10 border border-red-500/20 p-4 rounded-3xl flex items-center gap-4 shadow-xl shadow-red-500/5">
+            <div className="w-12 h-12 rounded-2xl bg-red-500 flex items-center justify-center text-white shadow-lg shadow-red-500/20">
+              <TrendingDown size={24} />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest">Gastos Totales</p>
+              <p className="text-2xl font-black text-white">{formatMoney(cajaGastos)}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -577,8 +594,13 @@ export default function EventosModule() {
                         </div>
                         <div className="flex items-center gap-6">
                           <div className="text-right">
-                            <p className="text-sm font-bold text-emerald-400">+{formatMoney(balance.neto)}</p>
-                            <p className="text-[10px] text-muted font-medium uppercase">Ganancia Final</p>
+                            <p className={`text-sm font-bold ${evento.nombre.startsWith('[GASTO]') ? 'text-red-400' : 'text-emerald-400'}`}>
+                              {evento.nombre.startsWith('[GASTO]') ? '-' : '+'}
+                              {formatMoney(Math.abs(balance.neto))}
+                            </p>
+                            <p className="text-[10px] text-muted font-medium uppercase">
+                              {evento.nombre.startsWith('[GASTO]') ? 'EGRESO DIRECTO' : 'GANANCIA FINAL'}
+                            </p>
                           </div>
                           <button 
                             onClick={(e) => {
