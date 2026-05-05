@@ -341,7 +341,7 @@ export default function EventosModule() {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
         <Loader2 className="animate-spin text-accent" size={48} />
-        <p className="text-muted font-medium animate-pulse">Cargando finanzas del curso...</p>
+        <p className="text-muted font-medium animate-pulse">Cargando gestión de gastos...</p>
       </div>
     )
   }
@@ -351,7 +351,7 @@ export default function EventosModule() {
       {/* Header y Caja Global */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Finanzas y Eventos</h2>
+          <h2 className="text-3xl font-bold tracking-tight">Eventos y Gastos</h2>
           <p className="text-muted text-sm opacity-80">
             Gestiona la recaudación y la caja global del curso.
           </p>

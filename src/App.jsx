@@ -33,7 +33,7 @@ function App() {
             { id: 'noticias', label: 'Novedades', icon: Bell, color: '#a78bfa' },
             { id: 'alumnos', label: 'Alumnos', icon: Users, color: '#60a5fa' },
             { id: 'calendario', label: 'Calendario', icon: Calendar, color: '#34d399' },
-            { id: 'eventos', label: 'Eventos/Finanzas', icon: Wallet, color: '#fbbf24' },
+            { id: 'eventos', label: 'Eventos/Gastos', icon: Wallet, color: '#fbbf24' },
             { id: 'cuotas', label: 'Cuotas Anuales', icon: CreditCard, color: '#8b5cf6' },
             { id: 'votaciones', label: 'Votaciones', icon: CheckCircle2, color: '#f472b6' },
             { id: 'settings', label: 'Configuración', icon: Settings, color: '#a5b4fc' },
@@ -112,7 +112,7 @@ function App() {
           { id: 'noticias', icon: Bell, label: 'Novedades', color: '#a78bfa' },
           { id: 'alumnos', icon: Users, label: 'Alumnos', color: '#60a5fa' },
           { id: 'calendario', icon: Calendar, label: 'Calendar', color: '#34d399' },
-          { id: 'eventos', icon: Wallet, label: 'Finanzas', color: '#fbbf24' },
+          { id: 'eventos', icon: Wallet, label: 'Gastos', color: '#fbbf24' },
           { id: 'cuotas', icon: CreditCard, label: 'Cuotas', color: '#8b5cf6' },
           { id: 'votaciones', icon: CheckCircle2, label: 'Votos', color: '#f472b6' },
         ].map((item) => (
