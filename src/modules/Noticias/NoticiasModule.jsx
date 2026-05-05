@@ -46,15 +46,38 @@ export default function NoticiasModule() {
   async function fetchNoticias() {
     setLoading(true)
     try {
+      // 1. Votaciones Vigentes
       const { data: vots } = await supabase.from('votaciones').select('*').eq('estado', 'vigente').limit(3)
-      const { data: evts } = await supabase.from('eventos').select('*').eq('estado', 'abierto').order('fecha', { ascending: true }).limit(1)
-      const { data: dirs } = await supabase.from('alumnos').select('nombre_alumno, rol_directiva').not('rol_directiva', 'is', null).neq('rol_directiva', '').order('rol_directiva')
+      
+      // 2. Próximo Evento (Usando tabla 'calendario' y filtrando por fecha >= hoy)
+      const today = new Date().toISOString().split('T')[0]
+      const { data: evts } = await supabase
+        .from('calendario')
+        .select('*')
+        .gte('date', today)
+        .order('date', { ascending: true })
+        .limit(1)
+
+      // 3. Miembros de Directiva (Con manejo de error si la columna no existe)
+      let dirs = []
+      try {
+        const { data, error: dirError } = await supabase
+          .from('alumnos')
+          .select('nombre_alumno, rol_directiva')
+          .not('rol_directiva', 'is', null)
+          .neq('rol_directiva', '')
+          .order('rol_directiva')
+        
+        if (!dirError) dirs = data || []
+      } catch (e) {
+        console.warn('La columna rol_directiva no existe en la tabla alumnos.', e)
+      }
 
       setNoticias(prev => ({
         ...prev,
         votacionesVigentes: vots || [],
         eventoCercano: evts?.[0] || null,
-        directiva: dirs || []
+        directiva: dirs
       }))
     } catch (error) {
       console.error('Error fetching noticias:', error)
@@ -153,12 +176,16 @@ Email: ${noticias.configPagos.email}
                 <div className="flex flex-col gap-4">
                   <div className="flex items-start gap-4">
                     <div className="flex flex-col items-center justify-center w-14 h-14 bg-blue-500/20 rounded-2xl border border-blue-500/20">
-                      <span className="text-[10px] font-black text-blue-400 uppercase">{new Date(noticias.eventoCercano.fecha).toLocaleDateString('es-CL', { month: 'short' })}</span>
-                      <span className="text-2xl font-black text-white leading-none">{new Date(noticias.eventoCercano.fecha).getDate() + 1}</span>
+                      <span className="text-[10px] font-black text-blue-400 uppercase">
+                        {new Date(noticias.eventoCercano.date + 'T12:00:00').toLocaleDateString('es-CL', { month: 'short' })}
+                      </span>
+                      <span className="text-2xl font-black text-white leading-none">
+                        {new Date(noticias.eventoCercano.date + 'T12:00:00').getDate()}
+                      </span>
                     </div>
                     <div className="flex flex-col">
-                      <h4 className="font-bold text-white text-lg leading-tight">{noticias.eventoCercano.nombre}</h4>
-                      <p className="text-xs text-muted mt-1">{noticias.eventoCercano.descripcion || 'Sin descripción adicional'}</p>
+                      <h4 className="font-bold text-white text-lg leading-tight">{noticias.eventoCercano.title}</h4>
+                      <p className="text-xs text-muted mt-1">{noticias.eventoCercano.description || 'Sin descripción adicional'}</p>
                     </div>
                   </div>
                 </div>
