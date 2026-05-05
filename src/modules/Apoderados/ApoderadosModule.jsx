@@ -200,22 +200,22 @@ export default function ApoderadosModule() {
               </div>
 
               {/* Cabecera de la ficha */}
-              <div className={`flex items-start justify-between w-full border-b pb-4 pr-10 ${alumno.rol_directiva ? 'border-accent/30' : 'border-white/5'}`}>
+              <div className={`flex items-start justify-between w-full border-b pb-4 pr-10 ${alumno.rol_directiva ? 'border-amber-500/30' : 'border-white/5'}`}>
                 <div className="flex items-center gap-4">
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border transition-all ${
                     alumno.rol_directiva 
-                      ? 'bg-accent/20 text-accent border-accent/40 shadow-[0_0_15px_rgba(139,92,246,0.3)]' 
+                      ? 'bg-amber-500/20 text-amber-500 border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.3)]' 
                       : 'bg-accent/10 text-accent border-accent/20'
                   }`}>
                     <GraduationCap size={24} />
                   </div>
                   <div>
                     <div className="flex flex-col">
-                      <h3 className={`font-bold text-xl m-0 leading-tight transition-colors ${alumno.rol_directiva ? 'text-accent' : 'text-main'}`}>
+                      <h3 className={`font-bold text-xl m-0 leading-tight transition-colors ${alumno.rol_directiva ? 'text-amber-500' : 'text-main'}`}>
                         {alumno.nombre_alumno}
                       </h3>
                       {alumno.rol_directiva && (
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-accent mt-1 bg-accent/10 px-2 py-0.5 rounded-full self-start border border-accent/20">
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-500 mt-1 bg-amber-500/10 px-2 py-0.5 rounded-full self-start border border-amber-500/20">
                           {alumno.rol_directiva}
                         </span>
                       )}

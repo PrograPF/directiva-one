@@ -213,12 +213,12 @@ Email: ${noticias.configPagos.email}
               {noticias.directiva.length > 0 ? (
                 noticias.directiva.map((member, i) => (
                   <div key={i} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5">
-                    <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center text-accent text-[10px] font-bold">
+                    <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500 text-[10px] font-bold">
                       {member.nombre_alumno.charAt(0)}
                     </div>
                     <div className="flex flex-col">
                       <span className="text-xs font-bold text-white leading-none">{member.nombre_alumno}</span>
-                      <span className="text-[9px] text-accent uppercase font-black tracking-widest mt-1">{member.rol_directiva}</span>
+                      <span className="text-[9px] text-amber-500 uppercase font-black tracking-widest mt-1">{member.rol_directiva}</span>
                     </div>
                   </div>
                 ))
