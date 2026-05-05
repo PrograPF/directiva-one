@@ -50,13 +50,21 @@ export default function NoticiasModule() {
       const { data: vots } = await supabase.from('votaciones').select('*').eq('estado', 'vigente').limit(3)
       
       // 2. Próximo Evento (Usando tabla 'calendario' y filtrando por fecha >= hoy)
-      const today = new Date().toISOString().split('T')[0]
-      const { data: evts } = await supabase
+      // Usamos el formato YYYY-MM-DD basado en la hora local para evitar desfases de zona horaria
+      const now = new Date()
+      const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+      
+      console.log('Buscando eventos desde:', today)
+
+      const { data: evts, error: evtError } = await supabase
         .from('calendario')
         .select('*')
         .gte('date', today)
         .order('date', { ascending: true })
         .limit(1)
+
+      if (evtError) console.error('Error al buscar eventos:', evtError)
+      console.log('Evento encontrado:', evts?.[0])
 
       // 3. Miembros de Directiva (Con manejo de error si la columna no existe)
       let dirs = []
